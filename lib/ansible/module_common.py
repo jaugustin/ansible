@@ -54,7 +54,8 @@ import shutil
 import stat
 import stat
 import grp
-import pwd
+#import pwd
+import getpass
 import platform
 import errno
 
@@ -266,7 +267,8 @@ class AnsibleModule(object):
         uid = st.st_uid
         gid = st.st_gid
         try:    
-            user = pwd.getpwuid(uid)[0]
+#            user = pwd.getpwuid(uid)[0]
+            user =  getpass.getuser()
         except KeyError:
             user = str(uid)
         try:    

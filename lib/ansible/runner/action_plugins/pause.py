@@ -19,7 +19,6 @@ from ansible.callbacks import vv
 from ansible.errors import AnsibleError as ae
 from ansible.runner.return_data import ReturnData
 from ansible.utils import getch, template, parse_kv
-from termios import tcflush, TCIFLUSH
 import datetime
 import sys
 import time
@@ -91,7 +90,16 @@ class ActionModule(object):
             else:
                 # Clear out any unflushed buffered input which would
                 # otherwise be consumed by raw_input() prematurely.
-                tcflush(sys.stdin, TCIFLUSH)
+                # Try to flush the buffer
+                try:
+                    #UNIX
+                    from termios import tcflush, TCIFLUSH
+                    tcflush(sys.stdin, TCIFLUSH)
+                except ImportError:
+                    #WIN32
+                    while msvcrt.kbhit():
+                        msvcrt.getch()
+                        
                 raw_input(self.prompt)
         except KeyboardInterrupt:
             while True:

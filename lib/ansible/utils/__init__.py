@@ -29,8 +29,6 @@ import ansible.constants as C
 import time
 import StringIO
 import stat
-import termios
-import tty
 
 VERBOSITY=0
 
@@ -335,16 +333,22 @@ def version(prog):
         result = result + " {0}".format(gitinfo)
     return result
 
-def getch():
-    ''' read in a single character '''
-    fd = sys.stdin.fileno()
-    old_settings = termios.tcgetattr(fd)
-    try:
-        tty.setraw(sys.stdin.fileno())
-        ch = sys.stdin.read(1)
-    finally:
-        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-    return ch
+try:
+    # Win32
+    from msvcrt import getch
+except ImportError:
+    # UNIX
+    def getch():
+        ''' read in a single character '''
+        import sys, tty, termios
+        fd = sys.stdin.fileno()
+        old_settings = termios.tcgetattr(fd)
+        try:
+            tty.setraw(sys.stdin.fileno())
+            ch = sys.stdin.read(1)
+        finally:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+        return ch
 
 ####################################################################
 # option handling code for /usr/bin/ansible and ansible-playbook

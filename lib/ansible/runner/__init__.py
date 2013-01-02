@@ -18,7 +18,8 @@
 import multiprocessing
 import signal
 import os
-import pwd
+#import pwd
+import getpass
 import Queue
 import random
 import traceback
@@ -149,7 +150,8 @@ class Runner(object):
             self.inventory.subset(subset)
 
         if self.transport == 'local':
-            self.remote_user = pwd.getpwuid(os.geteuid())[0]
+#            self.remote_user = pwd.getpwuid(os.geteuid())[0]
+            self.remote_user = getpass.getuser()
 
         if module_path is not None:
             for i in module_path.split(os.pathsep):

@@ -26,7 +26,8 @@ import ansible.constants as C
 import time
 import subprocess
 import datetime
-import pwd
+#import pwd
+import getpass
 
 # TODO: refactor this file
 
@@ -296,7 +297,8 @@ def template_from_file(basedir, path, vars):
     t = environment.from_string(data)
     vars = vars.copy()
     try:
-        template_uid = pwd.getpwuid(os.stat(realpath).st_uid).pw_name
+#        template_uid = pwd.getpwuid(os.stat(realpath).st_uid).pw_name
+        template_uid = os.stat(realpath).st_uid
     except:
         template_uid = os.stat(realpath).st_uid
     vars['template_host']   = os.uname()[1]

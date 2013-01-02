@@ -22,7 +22,7 @@ import shlex
 import pipes
 import random
 import select
-import fcntl
+#import fcntl
 import ansible.constants as C
 from ansible.callbacks import vvv
 from ansible import errors
@@ -118,8 +118,8 @@ class Connection(object):
         self._send_password()
 
         if self.runner.sudo and sudoable and self.runner.sudo_pass:
-            fcntl.fcntl(p.stdout, fcntl.F_SETFL,
-                        fcntl.fcntl(p.stdout, fcntl.F_GETFL) | os.O_NONBLOCK)
+#            fcntl.fcntl(p.stdout, fcntl.F_SETFL,
+#                        fcntl.fcntl(p.stdout, fcntl.F_GETFL) | os.O_NONBLOCK)
             sudo_output = ''
             while not sudo_output.endswith(prompt):
                 rfd, wfd, efd = select.select([p.stdout], [],
@@ -133,7 +133,7 @@ class Connection(object):
                     stdout = p.communicate()
                     raise errors.AnsibleError('ssh connection error waiting for sudo password prompt')
             stdin.write(self.runner.sudo_pass + '\n')
-            fcntl.fcntl(p.stdout, fcntl.F_SETFL, fcntl.fcntl(p.stdout, fcntl.F_GETFL) & ~os.O_NONBLOCK)
+#            fcntl.fcntl(p.stdout, fcntl.F_SETFL, fcntl.fcntl(p.stdout, fcntl.F_GETFL) & ~os.O_NONBLOCK)
 
         # We can't use p.communicate here because the ControlMaster may have stdout open as well
         stdout = ''
